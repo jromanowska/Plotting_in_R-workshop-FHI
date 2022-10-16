@@ -1,8 +1,8 @@
 ---
-title: "Tools for easy data exploration and visualization"
+title: "Tools for easy data visualization and exploration"
 author: "Julia Romanowska"
-institute: "BIOS, EPISTAT, UiB"
-date: "June 7, 2022"
+institute: "BIOS, IGS, UiB"
+date: "October 25, 2022"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -47,7 +47,7 @@ library(beepr)
 
 class: inverse, middle, center
 
-# <img src="FIGS/noun-telescope-white.png" tag="Telescope by anggun from NounProject.com" alt="Telescope icon by anggun from NounProject.com" style="height: 60px"> Data exploration
+# <img src="../FIGS/noun-telescope-white.png" tag="Telescope by anggun from NounProject.com" alt="Telescope icon by anggun from NounProject.com" style="height: 60px"> Data exploration
 
 ???
 

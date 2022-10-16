@@ -1,44 +1,48 @@
 #DESCRIPTION: Exemplary code with explorative data analysis
 #AUTHOR: Julia Romanowska
 #DATE CREATED: 2022-03-31
-#DATE UPDATED: 2022-04-06
+#DATE UPDATED: 2022-10-16
 
 # SETUP -----
 # NOTE: if you don't have these packages installed, run first in the console:
-#   install.packages(c("skimr", "DataExplorer", "dataReporter", "tibble", "ggplot2", "esquisse", "ggiraph"))
+#   install.packages(c("here", "readr", "skimr", "DataExplorer", "dataReporter"))
+library(readr)
 library(skimr)
+library(here)
 library(dataReporter)
 library(DataExplorer)
-library(tibble)
-library(esquisse)
-library(ggplot2)
-library(ggiraph)
 
-# DATA -----
-data(airquality)
-as_tibble(airquality)
-skim(airquality)
+# READ DATA -----
+# NOTE: to read data from STATA, SAS, or other proprietary statistical software,
+#       check functions in {haven} R package
 
-airquality1 <- airquality %>%
-  dplyr::mutate(Month = as.factor(Month))
-skim(airquality1)
+# didn't work:
+consult_orig <- read_csv(
+	here("DATA", "Konsultasjoner.csv")
+)
+consult_orig
+
+# trying with TAB-delimited format (\t)
+consult_orig <- read_delim(
+	here("DATA", "Konsultasjoner.csv"),
+	delim = "\t"
+)
+consult_orig #BETTER!
+# why are the numbers read in as characters? try checking entire dataset
+# THIS DATA SHOULD BE CLEANED!
+consult_tidy <- read_delim(
+	here("DATA", "Consultations_tidy_2021-09-03.txt"),
+	delim = "\t"
+)
+consult_tidy
+
+# SUMMARISE ----
+skim(consult_tidy)
+
 # REPORT ----
 # from DataExplorer:
-create_report(airquality)
+create_report(consult_tidy)
 
 # from dataReporter:
-makeDataReport(airquality)
+makeDataReport(consult_tidy)
 
-# VISUALIZATION ----
-# esquisse
-esquisse::esquisser(airquality)
-
-# take the code and make it interactive!
-# use ggiraph
-plot_points <- ggplot(airquality) +
- aes(x = Ozone, y = Solar.R, colour = as.factor(Month)) +
- geom_point_interactive(aes(tooltip = paste("OZ:", Ozone, "\n S.R:", Solar.R, "\nM:", Month)), shape = "circle", size = 3) +
- scale_color_viridis_d_interactive(option = "viridis", direction = 1) +
- theme_gray()
-
-girafe(ggobj = plot_points)
