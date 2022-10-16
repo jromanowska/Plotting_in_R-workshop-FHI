@@ -1,0 +1,537 @@
+---
+title: "Tools for easy data exploration and visualization"
+author: "Julia Romanowska"
+institute: "BIOS, EPISTAT, UiB"
+date: "June 7, 2022"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [xaringan-themer.css,add-theme.css]
+    nature:
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+style_solarized_light(
+  code_font_size = "0.7rem",
+  code_inline_font_size = "0.9rem"
+)
+
+# devtools::install_github("gadenbuie/xaringanExtra")
+library(xaringanExtra)
+use_clipboard()
+use_scribble()
+use_tile_view()
+use_fit_screen()
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  message = FALSE,
+  warning = FALSE,
+  comment = "",
+  cache = F,
+  echo = FALSE,
+  dpi = 150
+)
+
+# devtools::install_github("gadenbuie/countdown")
+library(countdown)
+library(fontawesome)
+library(beepr)
+```
+
+class: inverse, middle, center
+
+# <img src="FIGS/noun-telescope-white.png" tag="Telescope by anggun from NounProject.com" alt="Telescope icon by anggun from NounProject.com" style="height: 60px"> Data exploration
+
+???
+
+When we get new data in our hands, first thing we do is to explore.
+For that, summarizing data is very useful, but sometimes we need also to
+visualize data to be able to understand it or look at outliers.
+
+But most importantly, we need to check whether the data is in correct
+format and contains logical variables. We call this usable data format...
+
+---
+
+## Tidy data
+
+???
+
+... tidy data.
+
+At first, you might think that tidy data is the one where all the missing or
+unreliable datapoints are removed. But no!
+
+--
+
+**is not:**
+
+- data with missing values removed
+- data with unreliable measurements removed
+- data that looks nice in Excel
+
+???
+
+So what is it?
+
+--
+
+**is:**
+
+OBSERVATIONS = ROWS
+
+VARIABLES = COLUMNS
+
+???
+
+This is a format of data where each observation is in a row and each
+variable is in a column. Let's look at some examples.
+
+---
+
+## Tidy data
+### Examples
+
+|             | treatmenta  |  treatmentb |
+|:------------|:-----------:|:-----------:|
+| John Smith  |  ---        |  2          |
+| Jane Doe    |  16         |  11         |
+| Mary Johnson |  3         |   1         |
+
+<div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
+<span style="font-style: italic;">Table 1:</span> Typical presentation dataset.
+</div>
+
+|             | John Smith  | Jane Doe    |  Mary Johnson |
+|:------------|:-----------:|:-----------:|:-------------:|
+| treatmenta  |  -          | 16          |     3         |
+| treatmentb  |  2          |  11         |   1           |
+
+
+<div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
+<span style="font-style: italic;">Table 2:</span> The same data as in Table 1 but structured differently.
+</div>
+
+<p style="font-size: small; font-style: italic; position: absolute; bottom: 40px;">
+src: Wickham, H. (2014). Tidy data. Journal of Statistical Software, 59(10).
+</p>
+
+???
+
+Why these datasets are not tidy?
+
+The values under `treatmenta` and `treatmentb` are measuring the same thing,
+but perhaps at a different time, so these are not two variables.
+
+What would happen if we started analysing this and suddenly, we will get more
+data where there are now treatments a, b, and c? We would have to re-write
+the analysis scripts because we have had only a and b until now.
+
+In Table 2 - how do we approach analysis here? We have (potentially) very many
+columns with persons - should we analyse each separately by hand?
+
+---
+
+## Tidy data
+### Examples - ctd
+
+| person  | treatment | result |
+|:--------|:---------:|:------:|
+| John Smith | a | — |
+| Jane Doe   | a | 16 |
+| Mary Johnson | a | 3 |
+| John Smith | b | 2 |
+| Jane Doe | b | 11 |
+| Mary Johnson | b | 1 |
+
+<div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
+<span style="font-style: italic;">Table 3:</span> The same data as in Table 1 but with variables in columns and observations in rows.
+</div>
+
+???
+
+With tidy data, we can create a script that gathers all the treatment per
+person and e.g., compares the results. This script will be unchanged if there
+come more persons to our study or if the treatment changes.
+
+---
+
+## Tidy data
+
+<img src="FIGS/tidydata_2.jpg" style="width: 80%;">
+
+---
+
+## Tidy data
+
+<img src="FIGS/tidydata_5.jpg" style="width: 80%;">
+
+???
+
+If data is tidy, it's easier to automate the exploration and analysis.
+
+---
+
+## Automatic summary
+
+- depends on the data type _(character, factor, numeric, date/time)_
+
+- duplicated measurements
+
+- missing data
+
+- correlated variables
+
+---
+
+## Automatic summary
+
+- tools:
+
+    - `{skimr}`    
+    *basic summary of each variable,*
+    
+    - `{DataExplorer}`    
+    *automatic data exploration, with plots, correlations between variables, etc.*
+    
+    - `{dataReporter}`    
+    *automatic report, detailed, focus on potential problems in data*
+
+---
+
+class: inverse, center, middle
+
+# `r fa("laptop-code")` DEMO
+
+---
+
+class: inverse, middle, center
+
+# `r fa("swatchbook")` DataViz design
+
+---
+
+# Warmup
+
+```{r}
+countdown(minutes = 3, seconds = 0, warn_when = 15, top = "0", play_sound = TRUE)
+```
+
+> Grab a piece of paper and a pencil and draw this data!
+
+```{r}
+knitr::kable(
+tibble::tribble(
+~DATE, ~CAPACITY, ~DEMAND,
+"2019-04", 29263, 46193,
+"2019-05", 28037, 49131,
+"2019-06", 21596, 50124,
+"2019-07", 25895, 48850,
+"2019-08", 25813, 47602,
+"2019-09", 22427, 43697,
+"2019-10", 23605, 41058,
+"2019-11", 24263, 37364,
+"2019-12", 24243, 34364
+)
+)
+```
+
+???
+
+Questions
+
+- was it easy to imagine the data?
+- how did you start drawing?
+- did you change your point of view of the data _after_ you've sketched it?
+- what questions arised when you saw the data plotted?
+
+---
+
+## Data viz _design_
+
+
+???
+
+It's not enough to _show_ your data - you need to carefuly pick the datapoints you want to focus on,
+think about the fonts, the axes, the orientation of the plot, the colors(!), and title/captions.
+
+All this process is called _designing_ your visual.
+
+And as with any other design or planning, it all starts with...
+
+--
+
+- `r fa("pencil-alt")` pen & `r fa("sticky-note")` paper
+
+???
+
+When you grab a blank sheet of paper, you're getting free of all the limitations that a tool of your choice can give you.
+And of the frustrations as well, if you're only beginning to learn the tool!
+With a pen and paper, you may focus on what's important for the presentation of the data...
+
+--
+
+- `r fa("question-circle")` what the data tells me?
+
+???
+
+Normally, we would plot data when we want to explore some variables or when we have results of an analysis.
+One thing is known: we don't know how the data look like. We may know how it _should_ look like, though.
+That's why we may start designing with one type of plot in mind, but in the end the plot might look completely different!
+That's why it's important to draw by hand some sketches and think about the question here.
+When we finally have plotted something and understood the message behind the data, we need to improve the visual.
+
+--
+
+name: declutter
+
+- **declutter** + **explain**
+
+-  _([example](#plot_examples))_
+
+???
+
+- do we really need all the points?
+- what about the axis ticks? and axis labels?
+- can we include a take-home message in title/caption?
+- is the legend in right place?
+- have we used **color** wisely? (I will talk about the colors next)
+
+--
+
+<br>
+> Who's my target audience?
+
+???
+
+This entire process needs to be repeated when we present our plot for different groups of people!
+
+This process is very important and one could talk about this for hours. I've just mentioned important points, and gathered some references for you to read if you're interested.
+
+---
+
+## Plot type
+
+Plethora of plot types!
+
+- good short info about most used types: https://www.storytellingwithdata.com/chart-guide
+- all, including more exotic types: https://datavizproject.com/
+
+--
+
+Different type, based on:
+
+- continuous vs. categorical data
+- all points vs. averaged/smoothed
+- categories, time series, etc.
+
+--
+
+name: plot_types
+
+Some tips:
+
+- [lasagne plot](#spaghetti) _if you really need to plot **all** the data points_
+- [circles and bars](#area) _size matters!_
+
+???
+
+But the most important tip you get from me on choosing the plot type is...
+
+---
+
+class: inverse, right, middle
+
+## `r fa("skull-crossbones")` DON'T USE PIE CHART! `r fa("skull-crossbones")`
+
+### too high ink:information ratio
+
+### area is difficult to grasp
+
+### bars or points are _much better!_
+
+???
+
+Pie chart is OK when showing two-three categories - this requires then much "ink"
+and gives relatively little information. Although nowadays, nobody cares much
+about "ink", the low ink:information ratio is still considered as one of the
+markers of good quality in visual design.
+
+Human eye is not able to assess correctly small changes in area!
+
+Bars or points are much easier to create and much easier to read!
+
+---
+
+class: inverse, right, middle
+
+# `r fa("skull-crossbones")` DON'T EVER USE 3D! `r fa("skull-crossbones")`
+
+
+---
+
+## Choosing medium and audience
+
+- popular science *vs.* scientific article
+- manuscript *vs.* presentation
+- font size, level of details
+
+<img src="FIGS/selcuk_corruption.png" style="width:30%;"> <img src="FIGS/economist_graph.png" style="width:45%;">
+
+src: *Akcay, S. (2006). Corruption and human development. Cato Journal 26(1), 29-48*; 
+https://www.economist.com/graphic-detail/2011/12/02/corrosive-corruption
+
+---
+
+## Choosing medium and audience
+
+- popular science *vs.* scientific article
+- manuscript *vs.* presentation
+- font size, level of details
+
+<img src="FIGS/Rougier_PLoSCompBiol2014_fig3.png" style="width: 70%;">
+
+src: Rougier et al. PLoS Comput. Biol. 10, e1003833 (2014)
+
+---
+
+## Choosing color
+
+- **accessibility!**
+
+- good tool for choosing palette: [ColorBrewer](https://colorbrewer2.org/)    
+by Cynthia Brewer
+
+- recommended paper:    
+[Crameri, F., Shephard, G. E., & Heron, P. J. *(2020)*. The misuse of colour in science communication. *Nature Communications*, 11(1), 1–10.](https://www.nature.com/articles/s41467-020-19160-7)
+
+> `r fa("exclamation-triangle")` wrong color palette can _distort_ the data and
+> _change_ the meaning of your visual
+
+???
+
+Colors are important - they create meaning, grab viewer's attention, show
+differences or similarities, and when used wrongly can distort the information.
+
+We want to choose the colors _wisely_, so that everyone can get the information
+we wanted to show with ease. **Everyone** = we need to consider those who have
+problems with seeing all colors or problems with seeing at all. **With ease** =
+watch out for colors that are associated with a specific meaning.
+
+What to consider when choosing colors:
+
+- are there colors that _naturally_ come to mind when thinking about the 
+information we want to display? (e.g., hot-cold areas, bad-good treatments,
+seasonal change in measurements)
+
+    - check here: https://informationisbeautiful.net/visualizations/colours-in-cultures/
+    - blog post: https://www.storytellingwithdata.com/blog/2021/6/8/colors-and-emotions-in-data-visualization
+
+- do I need colors or is it enough with gray-shades?
+
+- is the color scale continuous or categorical?
+
+- _in case of continuous color scale:_ is it the best way to present a change or
+would it be enough to show, e.g., size or bars along a timeline?
+
+- _when dealing with very many categories:_ can a handfull of them be colored,
+leaving the rest in gray, for contrast? 
+
+---
+
+class: inverse, left, bottom
+
+## SUMMARY
+
+### know your data
+
+???
+
+So what we've learned til now:
+
+- spend time on exploring the data and check what the data tells you
+
+--
+
+### know your audience
+
+???
+
+- when critiquing the plot, have in mind who will look at it and under what circumstances!
+- you can't show the same plot in a scientific journal article, and during a presentation for students!
+
+--
+### _design_ your visual
+
+???
+
+- use time to design the visual
+- don't just show all the data you have, but choose carefully what to show and how so that the message is clear
+
+---
+
+class: inverse, center, middle
+
+# `r fa("laptop-code")` DEMO
+
+---
+
+name: plot_examples
+
+**Make a point!**
+
+<img src="FIGS/dataviz5.jpg" style="width: 45%;">
+
+.footnote[src: Natalia Kiseleva, http://eolay.tilda.ws/en]
+
+---
+
+**Make a point!**
+
+<img src="FIGS/dataviz4.jpg" style="width: 50%;">
+
+.footnote[src: Natalia Kiseleva, http://eolay.tilda.ws/en]
+
+
+[back](#declutter)
+
+---
+
+name: spaghetti
+
+## Not spaghetti, but lasagne...
+
+<img src="FIGS/Duke_StatMed2014_fig2.png" style="width: 48%;"><img src="FIGS/Duke_StatMed2014_fig3.png" style="width: 45%;">
+
+.footnote[src: Duke, S. P. et al. Stat.Med. 34 (2015)
+
+[back](#plot_types)]
+
+---
+
+name: area
+
+## Use disc area and bars starting from 0
+
+<img src="FIGS/Rougier_PLoSCompBiol2014_fig6.png" style="width: 98%;">
+
+.footnote[src: Rougier et al. PLoS Comput. Biol. 10, e1003833 (2014)]
+
+---
+
+## Don't clip the bars
+
+<img src="FIGS/dataviz7.png" style="width: 70%;">
+
+src: Natalia Kiseleva, http://eolay.tilda.ws/en
+
+
+[back](#plot_types)
+

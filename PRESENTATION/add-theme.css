@@ -1,0 +1,10 @@
+.title-slide {
+  background-image: url(FIGS/greg-rakozy-oMpAz-DN-9I-unsplash.jpg);
+  background-size: cover;
+}
+.title-slide h1, h2, h3, h4{
+  text-align: left;
+}
+.title-slide .remark-slide-number {
+  display: none;
+}
