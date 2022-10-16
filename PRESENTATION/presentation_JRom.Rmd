@@ -477,9 +477,21 @@ So what we've learned til now:
 
 ---
 
+## Automatic plotting
+
+- [{esquisse} package](https://dreamrs.github.io/esquisse/index.html)
+
+- [{finalfit} package](https://finalfit.org/articles/finalfit.html)
+
+- _many others, depending on analysis type_
+
+---
+
 class: inverse, center, middle
 
 # `r fa("laptop-code")` DEMO
+
+
 
 ---
 
