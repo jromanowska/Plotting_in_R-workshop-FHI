@@ -48,6 +48,42 @@ library(fontawesome)
 library(beepr)
 ```
 
+class: inverse, middle, left
+
+# Outline
+
+## Data exploration
+
+## Visualization basics
+
+## Advanced plotting with {ggplot2}
+
+???
+
+Visualization of data - whether it's results of statistical analyses or just
+some exemplary data points - is so much more than just the actual figure. The 
+tools for creating a visualization are the same, but the purpose might be very
+different:
+
+- we should create lots of visualizations when exploring the data
+- we will often plot analyses results - these might be easier to interact
+with than tables
+- we should _carefully design_ final plots, whether for a presentation or
+paper.
+
+During the workshop, we will talk about these different aspects of data 
+visualization. I will also show examples of tools that one can use, both
+very simple and advanced.
+
+--
+
+.small[
+_presentation and materials online:_ https://jromanowska.github.io/Plotting_in_R-workshop-FHI/    
+_NOTE: press 'P' to see my notes!_
+]
+
+---
+
 class: inverse, middle, center
 
 # <img src="figs/noun-telescope-white.png" tag="Telescope by anggun from NounProject.com" alt="Telescope icon by anggun from NounProject.com" style="height: 60px"> Data exploration
@@ -480,7 +516,7 @@ So what we've learned til now:
 
 ---
 
-## Automatic plotting
+## `r fa("hat-wizard")` Automatic plotting
 
 - [{esquisse} package](https://dreamrs.github.io/esquisse/index.html)
 
@@ -498,7 +534,7 @@ class: inverse, center, middle
 
 class: inverse, right, middle
 
-## Not automatic plotting with {ggplot2}
+## `r fa("paintbrush")` Not automatic plotting with {ggplot2}
 
 ---
 
@@ -556,7 +592,7 @@ class: inverse, right, middle
 ## Data
 
 <div style="float: right; position: fixed; right: 10px; top: 10px;">
-<img style="float: right; position: relative; width: 120px" src="palmer_penguins_logo.png" alt="ggiraph"/><br>
+<img style="float: right; position: relative; width: 120px" src="figs/palmer_penguins_logo.png" alt="palmer penguins R package logo"/><br>
 </div>
 
 [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/)
